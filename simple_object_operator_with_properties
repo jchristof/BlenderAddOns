@@ -5,10 +5,16 @@ from bpy.props import FloatVectorProperty, FloatProperty
 
 class MoveInDirectionOperator(bpy.types.Operator):
     """Move In Direction Operator"""
+    # an internal name for our operator
     bl_idname = "object.move_in_direction_operator"
+
+    # provides a descriptive name that is used in for example menu
     bl_label = "Move In Direction Operator"
+
+    # allow the operator to be registered in the toolbar area
     bl_options = {'REGISTER', 'UNDO'}
 
+    # provide a property that blender will display
     direction = FloatVectorProperty(
         name="direction",
         default=(1.0, 1.0, 1.0),
@@ -16,6 +22,7 @@ class MoveInDirectionOperator(bpy.types.Operator):
         description="move direction"
     )
 
+    # provide a property that blender will display
     distance = FloatProperty(
         name="distance",
         default=1.0,
@@ -24,17 +31,20 @@ class MoveInDirectionOperator(bpy.types.Operator):
         description="distance"
     )
 
+    # apply the effects of this operator
     def execute(self, context):
         dir = self.direction.normalized()
         context.active_object.location += self.distance * dir
         return {'FINISHED'}
 
+    # is the operator available in the current context
     @classmethod
     def poll(cls, context):
         ob = context.active_object
         return ob is not None and ob.mode == 'OBJECT'
 
-# 
+
+# add a button for this operator in the menu
 def add_object_button(self, context):
     self.layout.operator(
         MoveInDirectionOperator.bl_idname,
@@ -42,10 +52,12 @@ def add_object_button(self, context):
         icon='PLUGIN')
 
 
+# make the add on available for use - when this script is loaded in the text editor, "Run Script" runs this function
 def register():
     bpy.utils.register_class(MoveInDirectionOperator)
     bpy.types.VIEW3D_MT_object.append(add_object_button)
 
 
+# called when loaded by the preferences add ons
 if __name__ == "__main__":
     register()
